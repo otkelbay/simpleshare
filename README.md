@@ -5,12 +5,12 @@ Backend also developed by me and located [here](https://github.com/otkelbay/simp
 
 
 Realized functionality:
-  -Feed (70%)
-  -Posting (80%)
-  -Profile
-  -Auth
-  -Post page
-  -Commenting/Liking
+  - Feed (70%)
+  - Posting (80%)
+  - Profile
+  - Auth
+  - Post page
+  - Commenting/Liking
 
 I will be very glad for any contributing.
 
