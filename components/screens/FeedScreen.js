@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
     View,
     Text,
@@ -8,18 +8,21 @@ import {
     Image,
     TouchableOpacity,
     TouchableHighlight,
-    TouchableNativeFeedback,
+    TouchableNativeFeedback, RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import AnimatedLoader from "react-native-animated-loader";
+
+
 
 const FeedScreen = props => {
-
 
     const [feedList, setFeedList] = useState([]);
     const [page, setPage] = useState(1);
     const [likesList, setLikesList] = useState({});
+    const [isLoaded, setIsLoaded] = useState(false);
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -36,7 +39,15 @@ const FeedScreen = props => {
         });
     }
 
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        makeRequest(page);
+    };
+
     const makeRequest = (page) => {
+        console.log('making request');
         let token = user.api_token;
         let headers = {
             headers: {
@@ -53,9 +64,28 @@ const FeedScreen = props => {
                         "likes": item.likes
                     };
                 });
+                console.log('fucking response has ended');
                 setLikesList(tempLikesList);
                 setFeedList(data);
+                setIsLoaded(true);
+                console.log('fucking response has ended',isLoaded);
+
+                setRefreshing(false);
             });
+    };
+
+    const likeOrNot =  (id) => {
+        if(likesList.hasOwnProperty(id)){
+            return  likesList[id].liked;
+        }
+        return false;
+    };
+
+    const likesOrZero =  (id) => {
+        if(likesList.hasOwnProperty(id)){
+            return  likesList[id].likes;
+        }
+        return 0;
     };
 
     const putLike = (postId, switchLike, index) => {
@@ -79,43 +109,62 @@ const FeedScreen = props => {
 
     return <View style={style.container}>
         <View style={style.feed}>
-            <ScrollView>
-                {
-                    feedList.map((feed, index) => {
-                        return <View key={index} style={style.feedCard}>
-                            <View style={style.userCard}>
-                                <Image source={{uri: feed.author.avatar}} style={style.avatar}/>
-                                <Text style={style.userText}>{feed.author.login}</Text>
-                            </View>
-                            <View style={style.feedImageContainer}>
-                                <TouchableOpacity>
-                                    <Image height={100} width={100} style={style.feedImage}
-                                           source={{uri: feed.photo_url}}/>
-                                </TouchableOpacity>
-                                <View style={{padding: 10}}>
-                                    <Text style={{fontSize: 16}}>{feed.post_text}</Text>
-                                </View>
-                            </View>
-                            <View style={style.feedActionBar}>
-                                <View style={style.likeContainer}>
-                                    <TouchableOpacity onPress={() => {
-                                        putLike(feed.id, !likesList[feed.id].liked, index);
-                                    }}>
-                                        <Icon name="heart" size={30} color={likesList[feed.id].liked ? 'red' : 'white'}/>
+            {
+                isLoaded ?
+                    <ScrollView refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }>
+                    {
+                        feedList.map((feed, index) => {
+                            return <View key={index} style={style.feedCard}>
+                                <View style={style.userCard}>
+                                    <TouchableOpacity onPress={() => props.navigation.navigate('FeedProfile', {
+                                        user_id: feed.author.id
+                                    })}>
+                                        <Image source={{uri: feed.author.avatar}} style={style.avatar}/>
                                     </TouchableOpacity>
-                                    <Text style={style.likesAmount}>{likesList[feed.id].likes} likes</Text>
+                                    <Text onPress={() => props.navigation.navigate('FeedProfile', {
+                                        user_id: feed.author.id
+                                    })} style={style.userText}>{feed.author.login}</Text>
                                 </View>
-                                <View style={{flex: 2, justifyContent: 'center'}}>
-                                    <TouchableOpacity onPress={() => props.navigation.navigate('Post', {id: feed.id})}>
-                                        <Icon style={style.commentsIcon} name="commenting-o" size={30} color={'white'}/>
+                                <View style={style.feedImageContainer}>
+                                    <TouchableOpacity>
+                                        <Image height={100} width={100} style={style.feedImage}
+                                               source={{uri: feed.photo_url}}/>
                                     </TouchableOpacity>
+                                    <View style={{padding: 10}}>
+                                        <Text style={{fontSize: 16}}>{feed.post_text}</Text>
+                                    </View>
                                 </View>
-                                <View style={{flex: 1}}></View>
-                            </View>
-                        </View>;
-                    })
+                                <View style={style.feedActionBar}>
+                                    <View style={style.likeContainer}>
+                                        <TouchableOpacity onPress={() => {
+                                            putLike(feed.id, !likeOrNot(feed.id), index);
+                                        }}>
+                                            <Icon name="heart" size={30} color={likeOrNot(feed.id) ? 'red' : 'white'}/>
+                                        </TouchableOpacity>
+                                        <Text style={style.likesAmount}>{likesOrZero(feed.id)} likes</Text>
+                                    </View>
+                                    <View style={{flex: 2, justifyContent: 'center'}}>
+                                        <TouchableOpacity onPress={() => props.navigation.navigate('Post', {id: feed.id})}>
+                                            <Icon style={style.commentsIcon} name="commenting-o" size={30} color={'white'}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{flex: 1}}></View>
+                                </View>
+                            </View>;
+                        })
+                    }
+                </ScrollView> :
+                    <AnimatedLoader
+                    visible={!isLoaded}
+                    overlayColor="rgba(255,255,255,0.75)"
+                    animationStyle={{ width: 150, height: 150 }}
+                    speed={1.5}
+                    source={require("../../assets/preloader.json")} />
+
                 }
-            </ScrollView>
+
         </View>
     </View>;
 };

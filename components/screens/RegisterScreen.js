@@ -22,7 +22,7 @@ const RegisterScreen = props => {
         axios.post('http://568088d1.ngrok.io/api/register', data).then((response) => {
             console.log(response.data);
             AsyncStorage.setItem('user', JSON.stringify(response.data)).then(() => {
-                (new NativeEventEmitter()).emit('loggedIn');
+                (new NativeEventEmitter()).emit('registeredIn');
             });
         }).catch((response) => {
             alert('Something went wrong! Try again!');

@@ -13,7 +13,17 @@ const TakePhotoScreen = props => {
     const [img, setImg] = useState(null);
     const [camera, setCamera] = useState(null);
     const [postText, setPostText] = useState(null);
+    const [user, setUser] = useState(null);
     const [sendingRequest, setSendingRequest] = useState(false);
+
+    if (!user) {
+        AsyncStorage.getItem('user').then((userLocal) => {
+            console.log('user ' + userLocal);
+            let userObj = JSON.parse(userLocal);
+            setUser(userObj);
+            console.log(props);
+        });
+    }
 
     const takePicture = async () => {
         if (camera) {
@@ -36,7 +46,7 @@ const TakePhotoScreen = props => {
         setSendingRequest(true);
         axios.post('http://568088d1.ngrok.io/api/upload-post', data, {
             headers: {
-                'Authorization': 'Bearer pXqVE7BR98FQnpb2zTs3kyVSCg1crnXRazblWlemovbNaY6ma5wPOcJNcK2BYmaLTZ3eveHWzCO411P8',
+                'Authorization': 'Bearer ' + user.api_token,
             },
         }).then((response) => {
             console.log(response.data);

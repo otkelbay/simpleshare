@@ -8,7 +8,7 @@ import {
 const LoadingScreen = props => {
 
     return <View style={style.container}>
-        <Text style={style.mainText}>INSTAGRAM</Text>
+        <Text style={style.mainText}>#SHARENATURE</Text>
     </View>;
 
 };

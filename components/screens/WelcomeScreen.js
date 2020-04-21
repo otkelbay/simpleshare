@@ -1,18 +1,24 @@
 import React from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
+import {View, Text, Button, StyleSheet, ImageBackground} from 'react-native';
 
 const WelcomeScreen = props => {
     return <View style={style.container}>
-        <Text style={style.text}> Welcome To Instagram </Text>
-        <View style={style.buttons}>
-            <View style={style.button}>
-                <Button onPress={() => props.navigation.navigate('Register')} title={'Registration'}/>
+        <ImageBackground source={
+            require('../../assets/bg.jpg')
+        } style={style.bg}>
+            <Text style={style.text}>#SHARENATURE</Text>
+            <Text style={style.text2}>Share everything.</Text>
+            <View style={style.buttons}>
+                <View style={style.button}>
+                    <Button onPress={() => props.navigation.navigate('Register')} title={'Registration'}/>
+                </View>
+                <View style={style.button}>
+                    <Button style={style.loginButton} onPress={() => props.navigation.navigate('Login')}
+                            title={'Login'}/>
+                </View>
             </View>
-            <View style={style.button}>
-                <Button style={style.loginButton} onPress={() => props.navigation.navigate('Login')}
-                        title={'Login'}/>
-            </View>
-        </View>
+        </ImageBackground>
+
     </View>;
 };
 
@@ -23,10 +29,21 @@ const style = StyleSheet.create({
         flexDirection: "column",
         height: '100%'
     },
+    bg: {
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        width: '100%',
+        height: '100%'
+    },
     text: {
+        fontSize: 40,
+        color: '#d1f4fb'
+    },
+    text2: {
         fontSize: 30,
         marginBottom: 200,
-        color: '#4bbfcc'
+        color: '#070406'
     },
     buttons: {
         height: 100,
@@ -37,7 +54,8 @@ const style = StyleSheet.create({
     },
     loginButton: {
         marginTop: 20,
-        width: '100%'
+        width: '100%',
+        borderRadius: 10
     },
     button: {
         width: 200

@@ -13,6 +13,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import AnimatedLoader from 'react-native-animated-loader';
 
 const PostScreen = props => {
 
@@ -144,7 +145,9 @@ const PostScreen = props => {
                 </View>
                 <View style={style.feedActionBar}>
                     <View style={style.likeContainer}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => {
+                            switchLike(!liked);
+                        }}>
                             <Icon name="heart" size={30} color={liked ? 'red' : 'white'}/>
                         </TouchableOpacity>
                         <Text style={style.likesAmount}>{likes + ' likes'}</Text>
@@ -158,7 +161,12 @@ const PostScreen = props => {
                     </View>
                 </View>
                 {!writeComment ? comments() : writeCommentView()}
-            </View> : null
+            </View> : <AnimatedLoader
+                visible={!isLoaded}
+                overlayColor="rgba(255,255,255,0.75)"
+                animationStyle={{ width: 150, height: 150 }}
+                speed={1.5}
+                source={require("../../assets/preloader.json")} />
         }
     </View>;
 };

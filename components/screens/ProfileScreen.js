@@ -11,6 +11,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AnimatedLoader from 'react-native-animated-loader';
 
 const PostScreen = props => {
 
@@ -18,7 +19,20 @@ const PostScreen = props => {
     const [userInfo, setUserInfo] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isMe, setIsMe] = useState(false);
+    const [following, setFollowing] = useState(false);
     const [sendingRequest, setSendingRequest] = useState(false);
+
+    console.log(props.route);
+
+    const checkPropUserId = () => {
+        if (user
+            && typeof (props.route.params) !== 'undefined'
+            && typeof (props.route.params.user_id) !== 'undefined')
+        {
+            return props.route.params.user_id === user.id;
+        }
+        return true;
+    };
 
     if (!user) {
         AsyncStorage.getItem('user').then((userLocal) => {
@@ -36,6 +50,24 @@ const PostScreen = props => {
         });
     }
 
+    const follow = (userId, followUnfollow) => {
+        let tempObj = {...subscribedList};
+        tempObj[userId].followed = followUnfollow;
+        setSubscribedList(tempObj);
+
+        let token = user.api_token;
+        let headers = {
+            headers: {
+                'Authorization': 'Bearer ' + token,
+            },
+        };
+        let req = {
+            subscribe_to: userId,
+            follow: followUnfollow
+        };
+        axios.post(`http://568088d1.ngrok.io/api/subscribe`, req, headers);
+    };
+
     const getUserInfo = (apiToken) => {
         let token = apiToken ? apiToken : user.api_token;
         let headers = {
@@ -44,6 +76,7 @@ const PostScreen = props => {
             },
         };
         let body = {};
+        console.log('props',props.route.params);
         if (typeof (props.route.params) !== 'undefined' && typeof (props.route.params.user_id) !== 'undefined') {
             body['user_id'] = props.route.params.user_id;
         }
@@ -51,6 +84,7 @@ const PostScreen = props => {
             .then((response) => {
                 setUserInfo(response.data);
                 setIsLoaded(true);
+                setFollowing(response.data.following);
             });
     };
 
@@ -72,7 +106,8 @@ const PostScreen = props => {
                     </View>
                     {
                         !isMe ? <View style={style.flexOne}>
-                            <Button title={'Follow'} onPress={() => {
+                            <Button title={following ? 'Un-follow'  : 'Follow'} color={following ? 'blue'  : 'red' } onPress={() => {
+                                follow(userInfo.id,!following);
                             }}/>
                         </View> : null
                     }
@@ -80,12 +115,20 @@ const PostScreen = props => {
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <Text style={{fontSize: 15}}>Followers</Text>
-                        <Text style={{fontSize: 17, fontWeight: 'bold'}}>{userInfo.followers.length}</Text>
+                        <Text onPress={() => props.navigation.navigate('Followers', {
+                            followers: userInfo.followers
+                        })}  style={{fontSize: 15}}>Followers</Text>
+                        <Text onPress={() => props.navigation.navigate('Followers', {
+                            followers: userInfo.followers
+                        })}  style={{fontSize: 17, fontWeight: 'bold'}}>{userInfo.followers.length}</Text>
                     </View>
                     <View style={style.flexOne}>
-                        <Text style={{fontSize: 15}}>Subs</Text>
-                        <Text style={{fontSize: 17, fontWeight: 'bold'}}>{userInfo.subscribes.length}</Text>
+                        <Text onPress={() => props.navigation.navigate('Subscriptions', {
+                            subscriptions: userInfo.subscribes
+                        })} style={{fontSize: 15}}>Subs</Text>
+                        <Text onPress={() => props.navigation.navigate('Subscriptions', {
+                            subscriptions: userInfo.subscribes
+                        })} style={{fontSize: 17, fontWeight: 'bold'}}>{userInfo.subscribes.length}</Text>
                     </View>
                 </View>
             </View>
@@ -108,7 +151,9 @@ const PostScreen = props => {
                 <View style={style.postsScrollContainer}>
                     {
                         userInfo.posts.map((item, index) => {
-                            return <View key={index} style={style.post}><TouchableOpacity>
+                            return <View key={index} style={style.post}><TouchableOpacity
+                                onPress={() => props.navigation.navigate('Post', {id: item.id})}
+                            >
                                 <Image source={{uri: item.photo_url}} style={style.postImage}/>
                             </TouchableOpacity></View>;
                         })
@@ -120,7 +165,12 @@ const PostScreen = props => {
 
     return <View style={style.container}>
         {
-            isLoaded ? <View style={style.container}>{headerView()}{postsView()}</View> : null
+            isLoaded ? <View style={style.container}>{headerView()}{postsView()}</View> : <AnimatedLoader
+                visible={!isLoaded}
+                overlayColor="rgba(255,255,255,0.75)"
+                animationStyle={{ width: 150, height: 150 }}
+                speed={1.5}
+                source={require("../../assets/preloader.json")} />
         }
     </View>;
 };
