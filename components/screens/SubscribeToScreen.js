@@ -35,7 +35,7 @@ const SubscribeToScreen = props => {
                 'Authorization': 'Bearer ' + token,
             },
         };
-        axios.get(`http://568088d1.ngrok.io/api/get-suggested`,  headers)
+        axios.get(`http://185.125.46.87:8004/api/get-suggested`,  headers)
             .then((response) => {
                 let data = response.data;
                 let tempLikesList = {};
@@ -65,7 +65,7 @@ const SubscribeToScreen = props => {
             subscribe_to: userId,
             follow: true,
         };
-        axios.post(`http://568088d1.ngrok.io/api/subscribe`, req, headers);
+        axios.post(`http://185.125.46.87:8004/api/subscribe`, req, headers);
         setCounter(counter + 1);
     };
 

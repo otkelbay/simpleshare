@@ -44,7 +44,7 @@ const PostScreen = props => {
                 'Authorization': 'Bearer ' + token,
             },
         };
-        axios.get(`http://568088d1.ngrok.io/api/post/${postId}`, headers)
+        axios.get(`http://185.125.46.87:8004/api/post/${postId}`, headers)
             .then((response) => {
                 setPost(response.data);
                 console.log(response.data);
@@ -68,7 +68,7 @@ const PostScreen = props => {
             post_id: post.id,
             like: val,
         };
-        axios.post(`http://568088d1.ngrok.io/api/like`, req, headers);
+        axios.post(`http://185.125.46.87:8004/api/like`, req, headers);
     }
 
     const comments = () => {
@@ -97,7 +97,7 @@ const PostScreen = props => {
             'text': commentText,
         };
         setSendingRequest(true);
-        axios.post('http://568088d1.ngrok.io/api/comment', data, {
+        axios.post('http://185.125.46.87:8004/api/comment', data, {
             headers: {
                 'Authorization': `Bearer ${user.api_token}`,
             },

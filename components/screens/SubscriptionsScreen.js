@@ -40,7 +40,7 @@ const Subscriptions = props => {
             subscribe_to: userId,
             follow: followUnfollow
         };
-        axios.post(`http://568088d1.ngrok.io/api/subscribe`, req, headers);
+        axios.post(`http://185.125.46.87:8004/api/subscribe`, req, headers);
     };
 
     const isFollow = (id) => {

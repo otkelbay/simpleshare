@@ -54,7 +54,7 @@ const FeedScreen = props => {
                 'Authorization': 'Bearer ' + token,
             },
         };
-        axios.post(`http://568088d1.ngrok.io/api/feed?page=${page}`, [], headers)
+        axios.post(`http://185.125.46.87:8004/api/feed?page=${page}`, [], headers)
             .then((response) => {
                 let data = response.data.data;
                 let tempLikesList = {};
@@ -104,7 +104,7 @@ const FeedScreen = props => {
             post_id: postId,
             like: switchLike,
         };
-        axios.post(`http://568088d1.ngrok.io/api/like`, req, headers);
+        axios.post(`http://185.125.46.87:8004/api/like`, req, headers);
     };
 
     return <View style={style.container}>

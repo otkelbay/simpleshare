@@ -44,7 +44,7 @@ const TakePhotoScreen = props => {
 
         };
         setSendingRequest(true);
-        axios.post('http://568088d1.ngrok.io/api/upload-post', data, {
+        axios.post('http://185.125.46.87:8004/api/upload-post', data, {
             headers: {
                 'Authorization': 'Bearer ' + user.api_token,
             },

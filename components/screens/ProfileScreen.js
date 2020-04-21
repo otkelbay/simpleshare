@@ -65,7 +65,7 @@ const PostScreen = props => {
             subscribe_to: userId,
             follow: followUnfollow
         };
-        axios.post(`http://568088d1.ngrok.io/api/subscribe`, req, headers);
+        axios.post(`http://185.125.46.87:8004/api/subscribe`, req, headers);
     };
 
     const getUserInfo = (apiToken) => {
@@ -80,7 +80,7 @@ const PostScreen = props => {
         if (typeof (props.route.params) !== 'undefined' && typeof (props.route.params.user_id) !== 'undefined') {
             body['user_id'] = props.route.params.user_id;
         }
-        axios.post(`http://568088d1.ngrok.io/api/user-posts`, body, headers)
+        axios.post(`http://185.125.46.87:8004/api/user-posts`, body, headers)
             .then((response) => {
                 setUserInfo(response.data);
                 setIsLoaded(true);
