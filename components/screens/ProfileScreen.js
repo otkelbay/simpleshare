@@ -47,7 +47,7 @@ const PostScreen = props => {
         if (typeof (props.route.params) !== 'undefined' && typeof (props.route.params.user_id) !== 'undefined') {
             body['user_id'] = props.route.params.user_id;
         }
-        axios.post(`http://b25c802f.ngrok.io/api/user-posts`, body, headers)
+        axios.post(`http://568088d1.ngrok.io/api/user-posts`, body, headers)
             .then((response) => {
                 setUserInfo(response.data);
                 setIsLoaded(true);

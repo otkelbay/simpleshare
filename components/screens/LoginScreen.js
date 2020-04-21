@@ -25,7 +25,7 @@ const LoginScreen = props => {
             'login': login,
         };
 
-        axios.post('http://b25c802f.ngrok.io/api/login', data).then((response) => {
+        axios.post('http://568088d1.ngrok.io/api/login', data).then((response) => {
             console.log(response.data);
             AsyncStorage.setItem('user', JSON.stringify(response.data)).then(() => {
                 (new NativeEventEmitter()).emit('loggedIn');
